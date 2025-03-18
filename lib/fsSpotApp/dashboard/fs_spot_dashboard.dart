@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:fs_delivery/fsSpotApp/dashboard/fs_drop_downs_lists.dart';
+import 'package:gap/gap.dart';
 import '../../Models/fs_dashboard_model.dart';
 import '../../Screen/Home/dashboard/launch_methods.dart';
 import '../../Screen/Widgets/custom_form_field.dart';
 import '../../Screen/Widgets/form_title.dart';
+import '../../payments/payment_screen.dart';
 import '../controllers/fs_spot_dashboard_controller.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../Screen/Home/dashboard/drawer/refactored_drawer.dart';
@@ -116,7 +118,7 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
     return GetBuilder<FsSpotDashboardController>(
       init: FsSpotDashboardController(),
       builder: (dashboard) => DefaultTabController(
-        length: 3,
+        length: 5,
         child: Scaffold(
           // backgroundColor: kMainColor,
           drawer: RefactoredDrawer(),
@@ -237,6 +239,48 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                 ),
                 Tab(
                   child: Container(
+                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
+                    width: MediaQuery.of(context).size.width / 2.50,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          'Pending Delivery',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: Container(
+                    margin: EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
+                    width: MediaQuery.of(context).size.width / 2.50,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          'Ready to delivery'.tr,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Tab(
+                  child: Container(
                     margin: EdgeInsets.only(top: 10, bottom: 10, left: 0, right: 0),
                     width: MediaQuery.of(context).size.width / 2.50,
                     decoration: BoxDecoration(
@@ -256,27 +300,6 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                     ),
                   ),
                 ),
-                // Tab(
-                //   child: Container(
-                //     margin: EdgeInsets.only(top: 10, bottom: 10, left: 5, right: 5),
-                //     width: MediaQuery.of(context).size.width / 3.50,
-                //     decoration: BoxDecoration(
-                //       borderRadius: const BorderRadius.only(topRight: Radius.circular(5), bottomRight: Radius.circular(5)),
-                //     ),
-                //     child: Center(
-                //       child: Padding(
-                //         padding: const EdgeInsets.only(top: 5),
-                //         child: Text(
-                //           'All Parcel'.tr,
-                //           style: TextStyle(
-                //             fontWeight: FontWeight.w500,
-                //             fontSize: 16,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -416,6 +439,7 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                   child: Column(
                                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    spacing: 8,
                                                                     children: [
                                                                       Row(
                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -492,48 +516,50 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                           ),
                                                                         ),
                                                                       ]),
-                                                                      Row(
-                                                                        children: [
-                                                                          SizedBox(
-                                                                            width: 200.w,
-                                                                            child: Text(
-                                                                              dashboard.pendingParcelList[index].customerAddress.toString(),
-                                                                              style: const TextStyle(
-                                                                                fontWeight: FontWeight.w400,
-                                                                                fontSize: 12,
-                                                                                color: hintColor,
-                                                                              ),
-                                                                              maxLines: 2,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width: 5,
-                                                                          ),
-                                                                          TextButton(
-                                                                            onPressed: () {
-                                                                              var url = 'https://www.google.com/maps/dir/?api=1&origin=&destination=${dashboard.pendingParcelList[index].customerAddress.toString()}&travelmode=driving';
-                                                                              launchMapURL(Uri.parse(url));
-                                                                            },
-                                                                            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
-                                                                            child: Row(
+                                                                      dashboard.pendingParcelList[index].customerAddress == null
+                                                                          ? SizedBox.shrink()
+                                                                          : Row(
                                                                               children: [
-                                                                                Text("Map",
-                                                                                    style: TextStyle(
-                                                                                      fontWeight: FontWeight.w800,
-                                                                                      fontSize: 14,
-                                                                                      color: kMainColor,
-                                                                                    )),
-                                                                                Icon(
-                                                                                  Icons.location_on_outlined,
-                                                                                  color: kMainColor,
-                                                                                  size: 20,
+                                                                                SizedBox(
+                                                                                  width: 200.w,
+                                                                                  child: Text(
+                                                                                    dashboard.pendingParcelList[index].customerAddress ?? '',
+                                                                                    style: const TextStyle(
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                      fontSize: 12,
+                                                                                      color: hintColor,
+                                                                                    ),
+                                                                                    maxLines: 2,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 5,
+                                                                                ),
+                                                                                TextButton(
+                                                                                  onPressed: () {
+                                                                                    var url = 'https://www.google.com/maps/dir/?api=1&origin=&destination=${dashboard.pendingParcelList[index].customerAddress.toString()}&travelmode=driving';
+                                                                                    launchMapURL(Uri.parse(url));
+                                                                                  },
+                                                                                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Text("Map",
+                                                                                          style: TextStyle(
+                                                                                            fontWeight: FontWeight.w800,
+                                                                                            fontSize: 14,
+                                                                                            color: kMainColor,
+                                                                                          )),
+                                                                                      Icon(
+                                                                                        Icons.location_on_outlined,
+                                                                                        color: kMainColor,
+                                                                                        size: 20,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
                                                                                 ),
                                                                               ],
                                                                             ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
                                                                       Row(
                                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                         children: [
@@ -547,13 +573,26 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                           ),
                                                                           SizedBox(width: 6),
                                                                           Text(
-                                                                            '${dashboard.pendingParcelList[index].statusName.toString()}',
+                                                                            dashboard.pendingParcelList[index].statusName.toString(),
                                                                             style: const TextStyle(
                                                                               fontWeight: FontWeight.w400,
                                                                               fontSize: 12,
                                                                               color: hintColor,
                                                                             ),
                                                                           ),
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Shipment type:',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          Text(
+                                                                            '${dashboard.pendingParcelList[index].shipmentType}',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          )
                                                                         ],
                                                                       ),
                                                                     ],
@@ -607,7 +646,7 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                       margin: const EdgeInsets.only(top: 18),
                                       padding: const EdgeInsets.only(bottom: 250),
                                       height: MediaQuery.of(context).size.height / 1.0,
-                                      child: dashboard.acceptParcelList.length == 0
+                                      child: dashboard.acceptParcelList.isEmpty
                                           ? Center(
                                               child: Text(
                                               'no_item_found'.tr,
@@ -685,15 +724,45 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                           InkWell(
                                                                             onTap: () {
                                                                               // Get.back();
-                                                                              if (dashboard.acceptParcelList[index].status == 2) {
-                                                                                collectByDriverPopUp(dashboard.acceptParcelList[index]);
-                                                                              } else {
-                                                                                Get.snackbar(
-                                                                                  "!Warning!",
-                                                                                  "Delivery man not assigned yet!!",
-                                                                                  backgroundColor: Colors.orange.shade600,
-                                                                                  colorText: Colors.white,
-                                                                                );
+                                                                              print(dashboard.acceptParcelList[index].status);
+                                                                              print(dashboard.acceptParcelList[index].statusName);
+                                                                              print(dashboard.acceptParcelList[index].shipmentType);
+                                                                              if (dashboard.acceptParcelList[index].shipmentType == 'Pickup From Fs Spots') {
+                                                                                if (dashboard.acceptParcelList[index].status == 34) {
+                                                                                  collectByDriverPopUp(dashboard.acceptParcelList[index]);
+                                                                                } else {
+                                                                                  Get.snackbar(
+                                                                                    "!Warning!",
+                                                                                    "Pickup man didn't pickup parcel!",
+                                                                                    backgroundColor: Colors.orange.shade600,
+                                                                                    colorText: Colors.white,
+                                                                                  );
+                                                                                }
+                                                                              }
+                                                                              if (dashboard.acceptParcelList[index].shipmentType == 'Fs Office/Home Shipment') {
+                                                                                if (dashboard.acceptParcelList[index].status == 34) {
+                                                                                  collectByDriverPopUp(dashboard.acceptParcelList[index]);
+                                                                                } else {
+                                                                                  Get.snackbar(
+                                                                                    "!Warning!",
+                                                                                    "Pickup man didn't pickup parcel!",
+                                                                                    backgroundColor: Colors.orange.shade600,
+                                                                                    colorText: Colors.white,
+                                                                                  );
+                                                                                }
+                                                                                print('home');
+                                                                              }
+                                                                              if (dashboard.acceptParcelList[index].shipmentType == 'Fs Spots Shipment') {
+                                                                                if (dashboard.acceptParcelList[index].status == 34) {
+                                                                                  collectByDriverPopUp(dashboard.acceptParcelList[index]);
+                                                                                } else {
+                                                                                  Get.snackbar(
+                                                                                    "!Warning!",
+                                                                                    "Pickup man didn't pickup parcel!",
+                                                                                    backgroundColor: Colors.orange.shade600,
+                                                                                    colorText: Colors.white,
+                                                                                  );
+                                                                                }
                                                                               }
                                                                             },
                                                                             child: SizedBox(
@@ -806,13 +875,69 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                           ),
                                                                           SizedBox(width: 6),
                                                                           Text(
-                                                                            '${dashboard.acceptParcelList[index].statusName.toString()}',
+                                                                            dashboard.acceptParcelList[index].statusName.toString(),
                                                                             style: const TextStyle(
                                                                               fontWeight: FontWeight.w400,
                                                                               fontSize: 12,
                                                                               color: hintColor,
                                                                             ),
                                                                           ),
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Shipment type:',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          Text(
+                                                                            '${dashboard.acceptParcelList[index].shipmentType}',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Payment Status:',
+                                                                            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          dashboard.acceptParcelList[index].invoicePaymentStatus == 1 ? Text('Failed') : SizedBox.shrink(),
+                                                                          dashboard.acceptParcelList[index].invoicePaymentStatus == 2 ? Text('Processing') : SizedBox.shrink(),
+                                                                          dashboard.acceptParcelList[index].invoicePaymentStatus == 3 ? Text('Paid') : SizedBox.shrink(),
+                                                                          dashboard.acceptParcelList[index].invoicePaymentStatus == 0
+                                                                              ? MaterialButton(
+                                                                                  shape: StadiumBorder(
+                                                                                    side: BorderSide(color: Colors.grey),
+                                                                                  ),
+                                                                                  height: 30,
+                                                                                  minWidth: 70,
+                                                                                  onPressed: () {
+                                                                                    Get.to(
+                                                                                      () => PaymentScreen(
+                                                                                        paymentID: dashboard.acceptParcelList[index].paymentId!,
+                                                                                        amount: dashboard.acceptParcelList[index].currentPayable!,
+                                                                                      ),
+                                                                                    );
+                                                                                  },
+                                                                                  child: Row(
+                                                                                    spacing: 6,
+                                                                                    children: [
+                                                                                      Icon(
+                                                                                        Icons.monetization_on_outlined,
+                                                                                        size: 16,
+                                                                                      ),
+                                                                                      Text(
+                                                                                        'Pay',
+                                                                                        style: TextStyle(fontSize: 14),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                )
+                                                                              : SizedBox.shrink(),
                                                                         ],
                                                                       ),
                                                                     ],
@@ -832,6 +957,559 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                       ),
                     )),
               ),
+              GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: RefreshIndicator(
+                    displacement: 250,
+                    backgroundColor: Colors.yellow,
+                    color: Colors.red,
+                    strokeWidth: 3,
+                    onRefresh: () async {
+                      await Future.delayed(Duration(milliseconds: 1500));
+                      setState(() {
+                        dashboard.onInit();
+                      });
+                    },
+                    child: SingleChildScrollView(
+                      child: Obx(
+                        () => dashboard.dashboardLoader.value
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: kMainColor,
+                                ),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 18),
+                                      padding: const EdgeInsets.only(bottom: 250),
+                                      height: MediaQuery.of(context).size.height / 0.95,
+                                      child: dashboard.pendingDeliveryParcel.isEmpty
+                                          ? Center(
+                                              child: Text(
+                                              'no_item_found'.tr,
+                                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                            ))
+                                          : RefreshIndicator(
+                                              displacement: 250,
+                                              backgroundColor: Colors.yellow,
+                                              color: Colors.red,
+                                              strokeWidth: 3,
+                                              onRefresh: () async {
+                                                await Future.delayed(Duration(milliseconds: 1500));
+                                                setState(() {
+                                                  dashboard.onInit();
+                                                });
+                                              },
+                                              child: ListView.builder(
+                                                  itemCount: dashboard.pendingDeliveryParcel.length,
+                                                  shrinkWrap: true,
+                                                  padding: EdgeInsets.zero,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          showPopUp(dashboard.pendingDeliveryParcel[index]);
+                                                        });
+                                                      },
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(bottom: 14.0),
+                                                        child: Container(
+                                                          height: 145.h,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            border: Border.all(width: 1, color: kMainColor),
+                                                          ),
+                                                          child: Row(
+                                                            children: [
+                                                              Container(
+                                                                margin: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
+                                                                decoration: BoxDecoration(
+                                                                  borderRadius: BorderRadius.circular(50),
+                                                                  color: Colors.white,
+                                                                  image: DecorationImage(
+                                                                    image: AssetImage(Images.parcel),
+                                                                    fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+                                                                height: 60.h,
+                                                                width: 60.w,
+                                                              ),
+                                                              Padding(
+                                                                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                                child: Column(
+                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Row(
+                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 120.w,
+                                                                          child: Text(
+                                                                            dashboard.pendingDeliveryParcel[index].customerName.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontSize: 14,
+                                                                              color: nameColor,
+                                                                            ),
+                                                                            maxLines: 2,
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                        Gap(12),
+                                                                        InkWell(
+                                                                          onTap: () {
+                                                                            print("pending delivery");
+                                                                            pendingDeliveryPopUp(dashboard.pendingDeliveryParcel[index]);
+                                                                          },
+                                                                          child: SizedBox(
+                                                                            height: 35.h,
+                                                                            child: Card(
+                                                                              elevation: 5,
+                                                                              color: Colors.green,
+                                                                              shape: RoundedRectangleBorder(
+                                                                                borderRadius: BorderRadius.circular(12.0),
+                                                                              ),
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.only(left: 12, right: 12),
+                                                                                child: Center(
+                                                                                  child: Text(
+                                                                                    'change_status'.tr,
+                                                                                    style: kTextStyle.copyWith(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(children: [
+                                                                      Text(
+                                                                        dashboard.pendingDeliveryParcel[index].customerPhone.toString(),
+                                                                        style: const TextStyle(
+                                                                          fontWeight: FontWeight.w400,
+                                                                          fontSize: 14,
+                                                                          color: hintColor,
+                                                                        ),
+                                                                        maxLines: 1,
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width: 5,
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed: () => launchURL(dashboard.pendingDeliveryParcel[index].customerPhone.toString()),
+                                                                        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
+                                                                        child: Row(
+                                                                          children: [
+                                                                            Icon(
+                                                                              Icons.phone,
+                                                                              color: Colors.green,
+                                                                              size: 20,
+                                                                            ),
+                                                                            Text("Call me",
+                                                                                style: TextStyle(
+                                                                                  fontWeight: FontWeight.w800,
+                                                                                  fontSize: 14,
+                                                                                  color: Colors.green,
+                                                                                )),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ]),
+                                                                    Row(
+                                                                      children: [
+                                                                        SizedBox(
+                                                                          width: 200.w,
+                                                                          child: Text(
+                                                                            dashboard.pendingDeliveryParcel[index].customerAddress.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w400,
+                                                                              fontSize: 12,
+                                                                              color: hintColor,
+                                                                            ),
+                                                                            maxLines: 2,
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width: 5,
+                                                                        ),
+                                                                        TextButton(
+                                                                          onPressed: () {
+                                                                            var url = 'https://www.google.com/maps/dir/?api=1&origin=&destination=${dashboard.pendingDeliveryParcel[index].customerAddress.toString()}&travelmode=driving';
+                                                                            launchMapURL(Uri.parse(url));
+                                                                          },
+                                                                          style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              Text("Map",
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w800,
+                                                                                    fontSize: 14,
+                                                                                    color: kMainColor,
+                                                                                  )),
+                                                                              Icon(
+                                                                                Icons.location_on_outlined,
+                                                                                color: kMainColor,
+                                                                                size: 20,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                          '${Get.find<GlobalController>().currency!}${dashboard.pendingDeliveryParcel[index].cashCollection.toString()}',
+                                                                          style: const TextStyle(
+                                                                            fontWeight: FontWeight.w400,
+                                                                            fontSize: 12,
+                                                                            color: hintColor,
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(width: 6),
+                                                                        Text(
+                                                                          '${dashboard.pendingDeliveryParcel[index].statusName.toString()}',
+                                                                          style: const TextStyle(
+                                                                            fontWeight: FontWeight.w400,
+                                                                            fontSize: 12,
+                                                                            color: hintColor,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  })),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    )),
+              ),
+              GestureDetector(
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: RefreshIndicator(
+                    displacement: 250,
+                    backgroundColor: Colors.yellow,
+                    color: Colors.red,
+                    strokeWidth: 3,
+                    onRefresh: () async {
+                      await Future.delayed(Duration(milliseconds: 1500));
+                      setState(() {
+                        dashboard.onInit();
+                      });
+                    },
+                    child: SingleChildScrollView(
+                      child: Obx(
+                        () => dashboard.dashboardLoader.value
+                            ? SizedBox(
+                                height: MediaQuery.of(context).size.height * .80,
+                                width: double.infinity,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    color: kMainColor,
+                                  ),
+                                ),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 8),
+                                      // padding: const EdgeInsets.only(bottom: 250),
+                                      height: MediaQuery.of(context).size.height / 1.0,
+                                      child: dashboard.readyToDeliveryParcel.isEmpty
+                                          ? Center(
+                                              child: Text(
+                                              'no_item_found'.tr,
+                                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                            ))
+                                          : RefreshIndicator(
+                                              displacement: 250,
+                                              backgroundColor: Colors.yellow,
+                                              color: Colors.red,
+                                              strokeWidth: 3,
+                                              onRefresh: () async {
+                                                await Future.delayed(Duration(milliseconds: 1500));
+                                                setState(() {
+                                                  dashboard.onInit();
+                                                });
+                                              },
+                                              child: ListView.builder(
+                                                  itemCount: dashboard.readyToDeliveryParcel.length,
+                                                  shrinkWrap: true,
+                                                  padding: EdgeInsets.zero,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          showPopUp(dashboard.readyToDeliveryParcel[index]);
+                                                        });
+                                                      },
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(bottom: 14.0),
+                                                        child: Container(
+                                                          height: 192.h,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            border: Border.all(width: 1, color: kMainColor),
+                                                          ),
+                                                          child: FittedBox(
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  margin: const EdgeInsets.symmetric(vertical: 18, horizontal: 4),
+                                                                  decoration: BoxDecoration(
+                                                                    borderRadius: BorderRadius.circular(50),
+                                                                    color: Colors.white,
+                                                                    image: DecorationImage(
+                                                                      image: AssetImage(Images.parcel),
+                                                                      fit: BoxFit.cover,
+                                                                    ),
+                                                                  ),
+                                                                  height: 60.h,
+                                                                  width: 60.w,
+                                                                ),
+                                                                Padding(
+                                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                                  child: Column(
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    spacing: 8,
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          SizedBox(
+                                                                            width: 150.w,
+                                                                            child: Text(
+                                                                              dashboard.readyToDeliveryParcel[index].customerName.toString(),
+                                                                              style: const TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: 14,
+                                                                                color: nameColor,
+                                                                              ),
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap: () {
+                                                                              showStatusPopUp(dashboard.readyToDeliveryParcel[index]);
+                                                                            },
+                                                                            child: SizedBox(
+                                                                              height: 35.h,
+                                                                              child: Card(
+                                                                                elevation: 5,
+                                                                                color: Colors.green,
+                                                                                shape: RoundedRectangleBorder(
+                                                                                  borderRadius: BorderRadius.circular(12.0),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.only(left: 12, right: 12),
+                                                                                  child: Center(
+                                                                                    child: Text(
+                                                                                      'change_status'.tr,
+                                                                                      style: kTextStyle.copyWith(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      Row(children: [
+                                                                        Text(
+                                                                          dashboard.readyToDeliveryParcel[index].customerPhone.toString(),
+                                                                          style: const TextStyle(
+                                                                            fontWeight: FontWeight.w400,
+                                                                            fontSize: 14,
+                                                                            color: hintColor,
+                                                                          ),
+                                                                          maxLines: 1,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width: 5.w,
+                                                                        ),
+                                                                        TextButton(
+                                                                          onPressed: () => launchURL(dashboard.readyToDeliveryParcel[index].customerPhone.toString()),
+                                                                          style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              Icon(
+                                                                                Icons.phone,
+                                                                                color: Colors.green,
+                                                                                size: 20,
+                                                                              ),
+                                                                              Text("Call me",
+                                                                                  style: TextStyle(
+                                                                                    fontWeight: FontWeight.w800,
+                                                                                    fontSize: 14,
+                                                                                    color: Colors.green,
+                                                                                  )),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ]),
+                                                                      dashboard.readyToDeliveryParcel[index].customerAddress == null
+                                                                          ? SizedBox.shrink()
+                                                                          : Row(
+                                                                              children: [
+                                                                                SizedBox(
+                                                                                  width: 200.w,
+                                                                                  child: Text(
+                                                                                    dashboard.readyToDeliveryParcel[index].customerAddress ?? '',
+                                                                                    style: const TextStyle(
+                                                                                      fontWeight: FontWeight.w400,
+                                                                                      fontSize: 12,
+                                                                                      color: hintColor,
+                                                                                    ),
+                                                                                    maxLines: 2,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(
+                                                                                  width: 5,
+                                                                                ),
+                                                                                TextButton(
+                                                                                  onPressed: () {
+                                                                                    var url = 'https://www.google.com/maps/dir/?api=1&origin=&destination=${dashboard.readyToDeliveryParcel[index].customerAddress.toString()}&travelmode=driving';
+                                                                                    launchMapURL(Uri.parse(url));
+                                                                                  },
+                                                                                  style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
+                                                                                  child: Row(
+                                                                                    children: [
+                                                                                      Text("Map",
+                                                                                          style: TextStyle(
+                                                                                            fontWeight: FontWeight.w800,
+                                                                                            fontSize: 14,
+                                                                                            color: kMainColor,
+                                                                                          )),
+                                                                                      Icon(
+                                                                                        Icons.location_on_outlined,
+                                                                                        color: kMainColor,
+                                                                                        size: 20,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Text(
+                                                                            '${Get.find<GlobalController>().currency!}${dashboard.readyToDeliveryParcel[index].cashCollection.toString()}',
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w400,
+                                                                              fontSize: 12,
+                                                                              color: hintColor,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: 6),
+                                                                          Text(
+                                                                            dashboard.readyToDeliveryParcel[index].statusName.toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight: FontWeight.w400,
+                                                                              fontSize: 12,
+                                                                              color: hintColor,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Shipment type:',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          Text(
+                                                                            '${dashboard.readyToDeliveryParcel[index].shipmentType}',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Payment Status:',
+                                                                            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          dashboard.readyToDeliveryParcel[index].invoicePaymentStatus == 1 ? Text('Failed') : SizedBox.shrink(),
+                                                                          dashboard.readyToDeliveryParcel[index].invoicePaymentStatus == 2 ? Text('Processing') : SizedBox.shrink(),
+                                                                          dashboard.readyToDeliveryParcel[index].invoicePaymentStatus == 3 ? Text('Paid') : SizedBox.shrink(),
+                                                                          dashboard.readyToDeliveryParcel[index].invoicePaymentStatus == 0
+                                                                              ? MaterialButton(
+                                                                                  shape: StadiumBorder(
+                                                                                    side: BorderSide(color: Colors.grey),
+                                                                                  ),
+                                                                                  height: 30,
+                                                                                  minWidth: 70,
+                                                                                  onPressed: () {
+                                                                                    Get.to(
+                                                                                      () => PaymentScreen(
+                                                                                        paymentID: dashboard.readyToDeliveryParcel[index].paymentId!,
+                                                                                        amount: dashboard.readyToDeliveryParcel[index].currentPayable!,
+                                                                                      ),
+                                                                                    );
+                                                                                  },
+                                                                                  child: Row(
+                                                                                    spacing: 6,
+                                                                                    children: [
+                                                                                      Icon(
+                                                                                        Icons.monetization_on_outlined,
+                                                                                        size: 16,
+                                                                                      ),
+                                                                                      Text(
+                                                                                        'Pay',
+                                                                                        style: TextStyle(fontSize: 14),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                )
+                                                                              : SizedBox.shrink(),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    );
+                                                  })),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                    )),
+              ),
+
               GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: RefreshIndicator(
@@ -1021,7 +1699,7 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                         ),
                                                                         SizedBox(width: 6),
                                                                         Text(
-                                                                          '${dashboard.releaseParcelList[index].statusName.toString()}',
+                                                                          dashboard.releaseParcelList[index].statusName.toString(),
                                                                           style: const TextStyle(
                                                                             fontWeight: FontWeight.w400,
                                                                             fontSize: 12,
@@ -1046,216 +1724,6 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                       ),
                     )),
               ),
-              // GestureDetector(
-              //   onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              //   child: RefreshIndicator(
-              //       displacement: 250,
-              //       backgroundColor: Colors.yellow,
-              //       color: Colors.red,
-              //       strokeWidth: 3,
-              //       onRefresh: () async {
-              //         await Future.delayed(Duration(milliseconds: 1500));
-              //         setState(() {
-              //           dashboard.onInit();
-              //         });
-              //       },
-              //       child: SingleChildScrollView(
-              //         child: Obx(
-              //           () => dashboard.dashboardLoader.value
-              //               ? Center(
-              //                   child: CircularProgressIndicator(
-              //                     color: kMainColor,
-              //                   ),
-              //                 )
-              //               : Padding(
-              //                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              //                   child: Column(
-              //                     crossAxisAlignment: CrossAxisAlignment.center,
-              //                     children: [
-              //                       Container(
-              //                         margin: const EdgeInsets.only(top: 18),
-              //                         padding: const EdgeInsets.only(bottom: 250),
-              //                         height: MediaQuery.of(context).size.height / 0.95,
-              //                         child: dashboard.allParcelList.length == 0
-              //                             ? Center(
-              //                                 child: Text(
-              //                                 'no_item_found'.tr,
-              //                                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              //                               ))
-              //                             : RefreshIndicator(
-              //                                 displacement: 250,
-              //                                 backgroundColor: Colors.yellow,
-              //                                 color: Colors.red,
-              //                                 strokeWidth: 3,
-              //                                 onRefresh: () async {
-              //                                   await Future.delayed(Duration(milliseconds: 1500));
-              //                                   setState(() {
-              //                                     dashboard.onInit();
-              //                                   });
-              //                                 },
-              //                                 child: ListView.builder(
-              //                                     itemCount: dashboard.allParcelList.length,
-              //                                     shrinkWrap: true,
-              //                                     padding: EdgeInsets.zero,
-              //                                     itemBuilder: (BuildContext context, int index) {
-              //                                       return InkWell(
-              //                                         onTap: () {
-              //                                           setState(() {
-              //                                             showPopUp(dashboard.allParcelList[index]);
-              //                                           });
-              //                                         },
-              //                                         child: Padding(
-              //                                           padding: const EdgeInsets.only(bottom: 14.0),
-              //                                           child: Container(
-              //                                             height: 145.h,
-              //                                             decoration: BoxDecoration(
-              //                                               color: Colors.white,
-              //                                               borderRadius: BorderRadius.circular(10),
-              //                                               border: Border.all(width: 1, color: kMainColor),
-              //                                             ),
-              //                                             child: Row(
-              //                                               children: [
-              //                                                 Container(
-              //                                                   margin: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
-              //                                                   decoration: BoxDecoration(
-              //                                                     borderRadius: BorderRadius.circular(50),
-              //                                                     color: Colors.white,
-              //                                                     image: DecorationImage(
-              //                                                       image: AssetImage(Images.parcel),
-              //                                                       fit: BoxFit.cover,
-              //                                                     ),
-              //                                                   ),
-              //                                                   height: 60.h,
-              //                                                   width: 60.w,
-              //                                                 ),
-              //                                                 Padding(
-              //                                                   padding: const EdgeInsets.symmetric(vertical: 10.0),
-              //                                                   child: Column(
-              //                                                     crossAxisAlignment: CrossAxisAlignment.start,
-              //                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //                                                     children: [
-              //                                                       Text(
-              //                                                         dashboard.allParcelList[index].customerName.toString(),
-              //                                                         style: const TextStyle(
-              //                                                           fontWeight: FontWeight.w500,
-              //                                                           fontSize: 14,
-              //                                                           color: nameColor,
-              //                                                         ),
-              //                                                         maxLines: 2,
-              //                                                         overflow: TextOverflow.ellipsis,
-              //                                                       ),
-              //                                                       Row(children: [
-              //                                                         Text(
-              //                                                           dashboard.allParcelList[index].customerPhone.toString(),
-              //                                                           style: const TextStyle(
-              //                                                             fontWeight: FontWeight.w400,
-              //                                                             fontSize: 14,
-              //                                                             color: hintColor,
-              //                                                           ),
-              //                                                           maxLines: 1,
-              //                                                         ),
-              //                                                         SizedBox(
-              //                                                           width: 5,
-              //                                                         ),
-              //                                                         TextButton(
-              //                                                           onPressed: () => launchURL(dashboard.allParcelList[index].customerPhone.toString()),
-              //                                                           style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
-              //                                                           child: Row(
-              //                                                             children: [
-              //                                                               Icon(
-              //                                                                 Icons.phone,
-              //                                                                 color: Colors.green,
-              //                                                                 size: 20,
-              //                                                               ),
-              //                                                               Text("Call me",
-              //                                                                   style: TextStyle(
-              //                                                                     fontWeight: FontWeight.w800,
-              //                                                                     fontSize: 14,
-              //                                                                     color: Colors.green,
-              //                                                                   )),
-              //                                                             ],
-              //                                                           ),
-              //                                                         ),
-              //                                                       ]),
-              //                                                       Row(
-              //                                                         children: [
-              //                                                           SizedBox(
-              //                                                             width: 200.w,
-              //                                                             child: Text(
-              //                                                               dashboard.allParcelList[index].customerAddress.toString(),
-              //                                                               style: const TextStyle(
-              //                                                                 fontWeight: FontWeight.w400,
-              //                                                                 fontSize: 12,
-              //                                                                 color: hintColor,
-              //                                                               ),
-              //                                                               maxLines: 2,
-              //                                                               overflow: TextOverflow.ellipsis,
-              //                                                             ),
-              //                                                           ),
-              //                                                           SizedBox(
-              //                                                             width: 5,
-              //                                                           ),
-              //                                                           TextButton(
-              //                                                             onPressed: () {
-              //                                                               var url = 'https://www.google.com/maps/dir/?api=1&origin=&destination=${dashboard.allParcelList[index].customerAddress.toString()}&travelmode=driving';
-              //                                                               launchMapURL(Uri.parse(url));
-              //                                                             },
-              //                                                             style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size(50, 30), tapTargetSize: MaterialTapTargetSize.shrinkWrap, alignment: Alignment.centerLeft),
-              //                                                             child: Row(
-              //                                                               children: [
-              //                                                                 Text("Map",
-              //                                                                     style: TextStyle(
-              //                                                                       fontWeight: FontWeight.w800,
-              //                                                                       fontSize: 14,
-              //                                                                       color: kMainColor,
-              //                                                                     )),
-              //                                                                 Icon(
-              //                                                                   Icons.location_on_outlined,
-              //                                                                   color: kMainColor,
-              //                                                                   size: 20,
-              //                                                                 ),
-              //                                                               ],
-              //                                                             ),
-              //                                                           ),
-              //                                                         ],
-              //                                                       ),
-              //                                                       Row(
-              //                                                         children: [
-              //                                                           Text(
-              //                                                             '${Get.find<GlobalController>().currency!}${dashboard.allParcelList[index].cashCollection.toString()}',
-              //                                                             style: const TextStyle(
-              //                                                               fontWeight: FontWeight.w400,
-              //                                                               fontSize: 12,
-              //                                                               color: hintColor,
-              //                                                             ),
-              //                                                           ),
-              //                                                           SizedBox(width: 6),
-              //                                                           Text(
-              //                                                             '${dashboard.allParcelList[index].statusName.toString()}',
-              //                                                             style: const TextStyle(
-              //                                                               fontWeight: FontWeight.w400,
-              //                                                               fontSize: 12,
-              //                                                               color: hintColor,
-              //                                                             ),
-              //                                                           ),
-              //                                                         ],
-              //                                                       ),
-              //                                                     ],
-              //                                                   ),
-              //                                                 ),
-              //                                               ],
-              //                                             ),
-              //                                           ),
-              //                                         ),
-              //                                       );
-              //                                     })),
-              //                       ),
-              //                     ],
-              //                   ),
-              //                 ),
-              //         ),
-              //       )),
-              // ),
             ],
           ),
         ),
@@ -2162,5 +2630,252 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
             ),
           );
         });
+  }
+
+  void pendingDeliveryPopUp(parcel) {
+    dashboardController.noteController.text = '';
+    showDialog(
+      barrierDismissible: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Text(
+                              'change_status'.tr,
+                              style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Container(
+                              padding: const EdgeInsets.all(10.0),
+                              decoration: const BoxDecoration(color: kMainColor, shape: BoxShape.circle),
+                              child: const Icon(
+                                FontAwesomeIcons.x,
+                                color: kBgColor,
+                              )).onTap(() => finish(context)),
+                        ],
+                      ),
+                      const SizedBox(height: 10.0),
+                      Divider(
+                        thickness: 1.0,
+                        color: kGreyTextColor.withValues(alpha: 0.5),
+                      ),
+                      FormTitle(title: 'select_status'.tr),
+                      pendingDeliveryAccept.isEmpty
+                          ? Container()
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Container(
+                                height: 48,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: borderColors,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: ButtonTheme(
+                                  alignedDropdown: true,
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                        isExpanded: true,
+                                        menuMaxHeight: ScreenSize(context).mainHeight / 3,
+                                        items: pendingDeliveryAccept,
+                                        value: dashboardController.pendingDeliveryStatusID,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            dashboardController.pendingDeliveryStatusID = newValue!;
+                                            print(dashboardController.pendingDeliveryStatusID);
+                                          });
+                                          (context as Element).markNeedsBuild();
+                                        }),
+                                  ),
+                                ),
+                              ),
+                            ),
+                      const SizedBox(height: 10.0),
+                      // Row(
+                      //   children: [
+                      //     Text(
+                      //       'Signature Received'.tr,
+                      //       style: const TextStyle(
+                      //         fontWeight: FontWeight.w500,
+                      //         fontSize: 14,
+                      //         color: titleColor,
+                      //       ),
+                      //     ),
+                      //     const Text(
+                      //       '*',
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.w500,
+                      //         fontSize: 14,
+                      //         color: Color(0xffDD2702),
+                      //       ),
+                      //     ),
+                      //     TextButton(child: Text('Clear'), onPressed: _handleClearButtonPressed),
+                      //     // TextButton(
+                      //     //     child: Text('save Image'),
+                      //     //     onPressed:_handleSaveButtonPressed
+                      //     // )
+                      //   ],
+                      // ),
+                      // Column(children: [
+                      //   Padding(
+                      //       padding: EdgeInsets.all(5),
+                      //       child: Container(
+                      //           height: 120,
+                      //           child: SfSignaturePad(key: signatureGlobalKey, backgroundColor: Colors.white, strokeColor: Colors.black, minimumStrokeWidth: 1.0, maximumStrokeWidth: 3.0),
+                      //           decoration: BoxDecoration(border: Border.all(color: kMainColor)))),
+                      // ], mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.center),
+                      FormTitle(title: 'note'.tr),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextFormField(
+                          controller: dashboardController.noteController,
+                          textInputAction: TextInputAction.done,
+                          keyboardType: TextInputType.text,
+                          cursorColor: kMainColor,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 10.0),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: Colors.red,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                width: 1,
+                                color: Colors.red,
+                              ),
+                            ),
+                            fillColor: Colors.red,
+                            focusedBorder: const OutlineInputBorder(
+                              borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
+                              borderSide: BorderSide(width: 1, color: kMainColor),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                bottomLeft: Radius.circular(5),
+                                topRight: Radius.circular(5),
+                                bottomRight: Radius.circular(5),
+                              ),
+                              borderSide: BorderSide(width: 1, color: Colors.grey),
+                            ),
+                          ),
+                          onFieldSubmitted: (value) {
+                            //add code
+                          },
+                        ),
+                      ),
+                      // ElevatedButton.icon(
+                      //   onPressed: () {
+                      //     _getFromCamera();
+                      //   },
+                      //   icon: Icon(
+                      //     // <-- Icon
+                      //     Icons.camera_alt,
+                      //     size: 24.0,
+                      //   ),
+                      //   label: Text('Photo'), // <-- Text
+                      // ),
+
+                      const SizedBox(height: 15.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            child: Container(
+                              height: 45,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: kTitleColor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'cancel'.tr,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
+                          TextButton(
+                            child: Container(
+                              height: 45,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: kMainColor,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'yes_sure'.tr,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                    color: kBgColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              // final data = await signatureGlobalKey.currentState!.toImage(pixelRatio: 3.0);
+                              // final bytes = await data.toByteData(format: ui.ImageByteFormat.png);
+                              // Directory? directory = await getExternalStorageDirectory();
+                              // String path = directory!.path;
+                              // print(path);
+                              // await Directory('$path/signature').create(recursive: true);
+                              // pickedSignatureFile = await File('$path/signature/signature.png').writeAsBytes(bytes!.buffer.asUint8List());
+                              (context as Element).markNeedsBuild();
+                              final FormState? form = _formKey.currentState;
+                              if (form!.validate()) {
+                                // if (pickedSignatureFile != null && imageFile != null) {
+
+                                dashboardController.changeStatusForPendingDelivery(
+                                  context,
+                                  dashboardController.pendingDeliveryStatusID,
+                                  parcel.id.toString(),
+                                );
+
+                                Get.back();
+                              }
+                            },
+                          )
+                        ],
+                      ),
+                    ],
+                  )),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:fs_delivery/services/firebase_api.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -10,11 +11,14 @@ import '/Screen/Widgets/constant.dart';
 import 'Controllers/global-controller.dart';
 import 'Locale/language.dart';
 import 'Screen/SplashScreen/splash_screen.dart';
+import 'utils/keys.dart';
 
 const String appTitle = 'FS-platform';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Stripe.publishableKey = publishingKey;
+  // await Stripe.instance.applySettings();
   const firebaseOptions = FirebaseOptions(
     appId: '1:812501789771:android:abfbe6cf730e2b1682b1ce',
     apiKey: 'AIzaSyBQYhitmHCuJ0QTgEcOlXqrVT9XsBSfwko',

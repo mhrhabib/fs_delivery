@@ -5,13 +5,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:dio/dio.dart' as dio;
+import '../../Models/fs_dashboard_model.dart';
 import '../../Screen/Home/drop_downs_lists.dart';
 import '../../Screen/Widgets/constant.dart';
 import '../../Screen/Widgets/custom_form_field.dart';
 import '../../Screen/Widgets/form_title.dart';
 import '../../services/api_list.dart';
 import '../../services/base_client.dart';
-import '/Models/fs_dashboard_model.dart' as dm;
 import 'package:flutter/cupertino.dart';
 
 import '/services/server.dart';
@@ -22,10 +22,12 @@ import 'package:path/path.dart';
 class FsSpotDashboardController extends GetxController {
   UserService userService = UserService();
   Server server = Server();
-  var pendingParcelList = <dm.Parcel>[].obs;
-  var acceptParcelList = <dm.Parcel>[].obs;
-  var releaseParcelList = <dm.Parcel>[].obs;
-  var allParcelList = <dm.Parcel>[].obs;
+  var pendingParcelList = <Parcel>[].obs;
+  var acceptParcelList = <Parcel>[].obs;
+  var releaseParcelList = <Parcel>[].obs;
+  var pendingDeliveryParcel = <Parcel>[].obs;
+  var readyToDeliveryParcel = <Parcel>[].obs;
+  var allParcelList = <Parcel>[].obs;
   // List<Delivered> deliverymanAssignList = <Delivered>[];
   // List<Delivered> returnToCourierList = <Delivered>[];
   final TextEditingController cashController = TextEditingController();
@@ -34,12 +36,13 @@ class FsSpotDashboardController extends GetxController {
   String? statusID = '9';
   String? collectStatusID = '38';
   String? collectByDriverStatusID = '40';
+  String pendingDeliveryStatusID = '43';
 
   String? userID;
   RxBool dashboardLoader = false.obs;
   bool commonLoader = false;
   bool loader = false;
-  late dm.Data dashboardData;
+  late Data dashboardData;
 
   @override
   void onInit() {
@@ -109,6 +112,52 @@ class FsSpotDashboardController extends GetxController {
     }
   }
 
+  changeStatusForPendingDelivery(
+    context,
+    statusID,
+    parcelId,
+  ) {
+    dashboardLoader.value = true;
+
+    update();
+    Map<String, String> body = {
+      'parcel_id': parcelId,
+      'status_action': pendingDeliveryStatusID,
+      'note': noteController.text,
+    };
+    String jsonbody = jsonEncode(body);
+    print(body);
+    try {
+      server.postRequestWithToken(endPoint: APIList.spotManagerChangeStatus, body: jsonbody).then((response) {
+        print(" >><><><><><><><><><><><>S${response.statusCode}");
+        if (response != null && response.statusCode == 200) {
+          onInit();
+          dashboardLoader.value = false;
+          update();
+
+          // fsSpotsShipment.value = null;
+          // pickupFromFsSpots.value = null;
+          // fsOfficeHomeShipment.value = null;
+
+          Get.rawSnackbar(
+            snackPosition: SnackPosition.TOP,
+            title: 'Change Status',
+            message: 'Status Successfully',
+            backgroundColor: CupertinoColors.activeGreen.withOpacity(.9),
+            margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+          );
+        } else {
+          dashboardLoader.value = false;
+          update();
+        }
+      });
+    } catch (e) {
+      Get.log(e.toString());
+      dashboardLoader.value = false;
+      update();
+    }
+  }
+
   getDashboard() async {
     dashboardLoader.value = true;
 
@@ -117,16 +166,20 @@ class FsSpotDashboardController extends GetxController {
       pendingParcelList.clear();
       releaseParcelList.clear();
       acceptParcelList.clear();
+      readyToDeliveryParcel.clear();
+      pendingDeliveryParcel.clear();
       allParcelList.clear();
 
       // final jsonResponse = json.decode(response.data);
       print(" dashborad data ${response.data}");
-      var dashboard = dm.DashboardModel.fromJson(response.data);
+      var dashboard = FsDashboardModel.fromJson(response.data);
       dashboardData = dashboard.data!;
       pendingParcelList.value = dashboard.data!.pendingParcel!;
       releaseParcelList.value = dashboard.data!.releaseParcel!;
       acceptParcelList.value = dashboard.data!.acceptParcel!;
       allParcelList.value = dashboard.data!.allParcel!;
+      readyToDeliveryParcel.value = dashboard.data!.readyToDeliveryParcel!;
+      pendingDeliveryParcel.value = dashboardData.pendingDeliveryParcel!;
 
       dashboardLoader.value = false;
       update();
@@ -146,7 +199,7 @@ class FsSpotDashboardController extends GetxController {
     final queryParameters = {
       'parcel_id': parcelId,
       'status_action': statusID,
-      'documents': avatar.value != null ? avatar.value!.path : null,
+      'documents': avatar.value?.path,
       'note': noteController.text,
       'pickup_code': pickUpCodeController.value.text,
     };

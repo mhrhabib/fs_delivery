@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../payments/payment_screen.dart';
 import '../../Widgets/constant.dart';
 import '../../Widgets/custom_form_field.dart';
 import '../../Widgets/form_title.dart';
@@ -559,6 +560,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                                           ),
                                                                         ],
                                                                       ),
+                                                                      Row(
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Shipment type:',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          Text(
+                                                                            '${dashboard.pickupAssign[index].shipmentType}',
+                                                                            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          )
+                                                                        ],
+                                                                      ),
                                                                     ],
                                                                   ),
                                                                 ),
@@ -637,7 +651,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                       child: Padding(
                                                         padding: const EdgeInsets.only(bottom: 14.0),
                                                         child: Container(
-                                                          height: 192.h,
+                                                          height: 210.h,
                                                           decoration: BoxDecoration(
                                                             color: Colors.white,
                                                             borderRadius: BorderRadius.circular(10),
@@ -822,6 +836,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                                               color: hintColor,
                                                                             ),
                                                                           ),
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Shipment type:',
+                                                                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          Text(
+                                                                            '${dashboard.deliverymanAssign[index].shipmentType}',
+                                                                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                      Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                        spacing: 6,
+                                                                        children: [
+                                                                          Text(
+                                                                            'Payment Status:',
+                                                                            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w400, color: Colors.grey),
+                                                                          ),
+                                                                          dashboard.deliverymanAssign[index].invoicePaymentStatus == 1 ? Text('Failed') : SizedBox.shrink(),
+                                                                          dashboard.deliverymanAssign[index].invoicePaymentStatus == 2 ? Text('Processing') : SizedBox.shrink(),
+                                                                          dashboard.deliverymanAssign[index].invoicePaymentStatus == 3 ? Text('Paid') : SizedBox.shrink(),
+                                                                          dashboard.deliverymanAssign[index].invoicePaymentStatus == 0
+                                                                              ? MaterialButton(
+                                                                                  shape: StadiumBorder(
+                                                                                    side: BorderSide(color: Colors.grey),
+                                                                                  ),
+                                                                                  height: 30,
+                                                                                  minWidth: 70,
+                                                                                  onPressed: () {
+                                                                                    Get.to(
+                                                                                      () => PaymentScreen(
+                                                                                        paymentID: dashboard.deliverymanAssign[index].paymentId!,
+                                                                                        amount: dashboard.deliverymanAssign[index].currentPayable!,
+                                                                                      ),
+                                                                                    );
+                                                                                  },
+                                                                                  child: Row(
+                                                                                    spacing: 6,
+                                                                                    children: [
+                                                                                      Icon(
+                                                                                        Icons.monetization_on_outlined,
+                                                                                        size: 16,
+                                                                                      ),
+                                                                                      Text(
+                                                                                        'Collect',
+                                                                                        style: TextStyle(fontSize: 14),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                )
+                                                                              : SizedBox.shrink(),
                                                                         ],
                                                                       ),
                                                                     ],

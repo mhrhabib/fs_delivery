@@ -50,6 +50,21 @@ List<DropdownMenuItem<String>> get fsPickupDropdownItemsCollectBydriver {
   return pickupMenuItems;
 }
 
+List<DropdownMenuItem<String>> get pendingDeliveryAccept {
+  List<DropdownMenuItem<String>> pickupMenuItems = [
+    DropdownMenuItem(
+        value: '43',
+        child: Text(
+          "Ready to Delivery".tr,
+          style: TextStyle(
+            color: kTitleColor,
+            fontWeight: FontWeight.w500,
+          ),
+        )),
+  ];
+  return pickupMenuItems;
+}
+
 List<DropdownMenuItem<String>> get fsDropdownItems {
   List<DropdownMenuItem<String>> menuItems = [
     DropdownMenuItem(

@@ -101,6 +101,14 @@ class AuthController extends GetxController {
           if (jsonResponse['success'] == false) {
             Get.to(() => SignUpVerifyScreen());
           }
+        } else if (response.statusCode == 422) {
+          loader = false;
+          Future.delayed(const Duration(milliseconds: 10), () {
+            update();
+          });
+          final jsonResponse = json.decode(response.body);
+          print(jsonResponse);
+          Get.rawSnackbar(message: "${jsonResponse['data']['errors']['email']}", backgroundColor: Colors.red, snackPosition: SnackPosition.TOP);
         } else {
           loader = false;
           Future.delayed(const Duration(milliseconds: 10), () {

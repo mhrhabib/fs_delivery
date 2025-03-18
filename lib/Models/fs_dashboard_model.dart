@@ -1,18 +1,18 @@
-class DashboardModel {
+class FsDashboardModel {
   bool? success;
   String? message;
   Data? data;
 
-  DashboardModel({this.success, this.message, this.data});
+  FsDashboardModel({this.success, this.message, this.data});
 
-  DashboardModel.fromJson(Map<String, dynamic> json) {
+  FsDashboardModel.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['success'] = success;
     data['message'] = message;
     if (this.data != null) {
@@ -24,43 +24,63 @@ class DashboardModel {
 
 class Data {
   List<Parcel>? pendingParcel;
+  List<Parcel>? pendingDeliveryParcel;
+  List<Parcel>? readyToDeliveryParcel;
   List<Parcel>? acceptParcel;
   List<Parcel>? releaseParcel;
   List<Parcel>? allParcel;
 
-  Data({this.pendingParcel, this.acceptParcel, this.releaseParcel, this.allParcel});
+  Data({this.pendingParcel, this.pendingDeliveryParcel, this.readyToDeliveryParcel, this.acceptParcel, this.releaseParcel, this.allParcel});
 
   Data.fromJson(Map<String, dynamic> json) {
     if (json['pending_parcel'] != null) {
       pendingParcel = <Parcel>[];
       json['pending_parcel'].forEach((v) {
-        pendingParcel!.add(new Parcel.fromJson(v));
+        pendingParcel!.add(Parcel.fromJson(v));
+      });
+    }
+    if (json['pending_delivery_parcel'] != null) {
+      pendingDeliveryParcel = <Parcel>[];
+      json['pending_delivery_parcel'].forEach((v) {
+        pendingDeliveryParcel!.add(Parcel.fromJson(v));
+      });
+    }
+    if (json['ready_to_delivery_parcel'] != null) {
+      readyToDeliveryParcel = <Parcel>[];
+      json['ready_to_delivery_parcel'].forEach((v) {
+        readyToDeliveryParcel!.add(Parcel.fromJson(v));
       });
     }
     if (json['accept_parcel'] != null) {
       acceptParcel = <Parcel>[];
       json['accept_parcel'].forEach((v) {
-        acceptParcel!.add(new Parcel.fromJson(v));
+        acceptParcel!.add(Parcel.fromJson(v));
       });
     }
     if (json['release_parcel'] != null) {
       releaseParcel = <Parcel>[];
       json['release_parcel'].forEach((v) {
-        releaseParcel!.add(new Parcel.fromJson(v));
+        releaseParcel!.add(Parcel.fromJson(v));
       });
     }
     if (json['all_parcel'] != null) {
       allParcel = <Parcel>[];
       json['all_parcel'].forEach((v) {
-        allParcel!.add(new Parcel.fromJson(v));
+        allParcel!.add(Parcel.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (pendingParcel != null) {
       data['pending_parcel'] = pendingParcel!.map((v) => v.toJson()).toList();
+    }
+    if (pendingDeliveryParcel != null) {
+      data['pending_delivery_parcel'] = pendingDeliveryParcel!.map((v) => v.toJson()).toList();
+    }
+    if (readyToDeliveryParcel != null) {
+      data['ready_to_delivery_parcel'] = readyToDeliveryParcel!.map((v) => v.toJson()).toList();
     }
     if (acceptParcel != null) {
       data['accept_parcel'] = acceptParcel!.map((v) => v.toJson()).toList();
@@ -106,6 +126,10 @@ class Parcel {
   String? parcelDate;
   String? parcelTime;
   dynamic reviewStar;
+  String? paymentId;
+  int? invoicePaymentStatus;
+  int? senderFsPointId;
+  int? customerFsPointId;
 
   Parcel(
       {this.id,
@@ -137,7 +161,11 @@ class Parcel {
       this.updatedAt,
       this.parcelDate,
       this.parcelTime,
-      this.reviewStar});
+      this.reviewStar,
+      this.paymentId,
+      this.invoicePaymentStatus,
+      this.senderFsPointId,
+      this.customerFsPointId});
 
   Parcel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -170,10 +198,14 @@ class Parcel {
     parcelDate = json['parcel_date'];
     parcelTime = json['parcel_time'];
     reviewStar = json['review_star'];
+    paymentId = json['payment_id'];
+    invoicePaymentStatus = json['invoice_payment_status'];
+    senderFsPointId = json['sender_fs_point_id'];
+    customerFsPointId = json['customer_fs_point_id'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['tracking_id'] = trackingId;
     data['merchant_id'] = merchantId;
@@ -204,6 +236,10 @@ class Parcel {
     data['parcel_date'] = parcelDate;
     data['parcel_time'] = parcelTime;
     data['review_star'] = reviewStar;
+    data['payment_id'] = paymentId;
+    data['invoice_payment_status'] = invoicePaymentStatus;
+    data['sender_fs_point_id'] = senderFsPointId;
+    data['customer_fs_point_id'] = customerFsPointId;
     return data;
   }
 }
