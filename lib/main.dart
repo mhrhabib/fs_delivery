@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,8 +18,9 @@ const String appTitle = 'FS-platform';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Stripe.publishableKey = publishingKey;
-  // await Stripe.instance.applySettings();
+
+  Stripe.publishableKey = publishingKey;
+  await Stripe.instance.applySettings();
   const firebaseOptions = FirebaseOptions(
     appId: '1:812501789771:android:abfbe6cf730e2b1682b1ce',
     apiKey: 'AIzaSyBQYhitmHCuJ0QTgEcOlXqrVT9XsBSfwko',
@@ -28,6 +30,17 @@ Future<void> main() async {
   );
   await Firebase.initializeApp(name: 'courier', options: firebaseOptions);
   await FirebaseApi().initNotifications();
+  await FirebaseApi().setupFlutterLocalNotifications();
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseApi().showFlutterNotification(title: message.notification!.title!, body: message.notification!.body!);
+    print("hello");
+  });
   final box = GetStorage();
   await requestLocationPermission();
   await GetStorage.init();

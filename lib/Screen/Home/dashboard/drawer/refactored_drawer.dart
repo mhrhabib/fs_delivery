@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:fs_delivery/Screen/Home/dashboard/dashboard_screen.dart';
 import 'package:fs_delivery/fsSpotApp/home/fs_spot_home.dart';
 import 'package:get/get.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -27,11 +28,17 @@ class RefactoredDrawer extends StatelessWidget {
             children: [
               const SizedBox(height: 50.0),
               UserInfo(),
-              DrawerListItem(
-                icon: FontAwesomeIcons.house,
-                title: 'dashboard',
-                onTap: () => const FsSpotHome().launch(context),
-              ),
+              storage.read('userType') == 'deliveryman'
+                  ? DrawerListItem(
+                      icon: FontAwesomeIcons.house,
+                      title: 'dashboard',
+                      onTap: () => const DashboardScreen().launch(context),
+                    )
+                  : DrawerListItem(
+                      icon: FontAwesomeIcons.house,
+                      title: 'dashboard',
+                      onTap: () => const FsSpotHome().launch(context),
+                    ),
               DrawerListItem(
                 icon: FontAwesomeIcons.user,
                 title: 'profile',

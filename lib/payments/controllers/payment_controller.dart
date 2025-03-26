@@ -35,7 +35,7 @@ class PaymentController extends GetxController {
         toast(response['message']);
       }
 
-      if (response['status'] == 'success') {
+      if (storage.read('userType') == 'deliveryman' ? (response['success'] == 'true') : response['status'] == 'success') {
         toast(response['message']);
         Get.off(() => storage.read('userType') == 'deliveryman' ? DashboardScreen() : FsSpotDashboard());
       }

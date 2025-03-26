@@ -206,7 +206,7 @@ class AuthController extends GetxController {
       "device_token": deviceToken,
       "topic": email,
     };
-    print(body);
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>$body");
     String jsonBody = json.encode(body);
     server.postRequestWithToken(endPoint: APIList.fcmSubscribe, body: jsonBody).then((response) {
       print("fcm subscribe returns code ::::${response.statusCode}");

@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart';
-
 import '../../../payments/payment_screen.dart';
 import '../../Widgets/constant.dart';
 import '../../Widgets/custom_form_field.dart';
@@ -48,13 +46,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     checkGps();
+    Future.microtask(() => dashboardController.getDashboard());
     super.initState();
     FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {});
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print(message.notification!.title);
-      Get.snackbar(message.notification!.title!, message.notification!.body!,
-          snackPosition: SnackPosition.TOP, backgroundColor: Colors.greenAccent, maxWidth: ScreenSize(context).mainWidth / 1.007, margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20));
+      Get.snackbar(
+        message.notification!.title!,
+        message.notification!.body!,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.greenAccent,
+        // ignore: use_build_context_synchronously
+        maxWidth: ScreenSize(context).mainWidth / 1.007,
+        margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
+      );
     });
   }
 
@@ -1654,41 +1660,45 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               )
                             : SizedBox().marginZero,
                         const SizedBox(height: 10.0),
-                        FormTitle(title: 'ID'.tr),
-                        Obx(
-                          () => Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("File:"),
-                                  InkWell(
-                                      onTap: () {
-                                        dashboardController.avatarImage();
-                                      },
-                                      child: Icon(Icons.image)),
-                                ],
+                        dashboardController.statusID == '24' ? SizedBox.shrink() : FormTitle(title: 'ID'.tr),
+                        dashboardController.statusID == '24'
+                            ? SizedBox.shrink()
+                            : Obx(
+                                () => Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("File:"),
+                                        InkWell(
+                                            onTap: () {
+                                              dashboardController.avatarImage();
+                                            },
+                                            child: Icon(Icons.image)),
+                                      ],
+                                    ),
+                                    dashboardController.avatarFilename.isEmpty ? Text('') : Text("${dashboardController.avatarFilename}"),
+                                  ],
+                                ),
                               ),
-                              dashboardController.avatarFilename.isEmpty ? Text('') : Text("${dashboardController.avatarFilename}"),
-                            ],
-                          ),
-                        ),
-                        FormTitle(title: 'PickUp code'.tr),
-                        TextFormField(
-                          controller: dashboardController.pickUpCodeController.value,
-                          decoration: InputDecoration(
-                            hintText: 'Pickup Code',
-                            contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(width: 1, color: Colors.black),
-                            ),
-                            focusedBorder: const OutlineInputBorder(
-                              borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
-                              borderSide: BorderSide(width: 1, color: kMainColor),
-                            ),
-                          ),
-                        ),
+                        dashboardController.statusID == '24' ? SizedBox.shrink() : FormTitle(title: 'PickUp code'.tr),
+                        dashboardController.statusID == '24'
+                            ? SizedBox.shrink()
+                            : TextFormField(
+                                controller: dashboardController.pickUpCodeController.value,
+                                decoration: InputDecoration(
+                                  hintText: 'Pickup Code',
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    borderSide: BorderSide(width: 1, color: Colors.black),
+                                  ),
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(5), bottomLeft: Radius.circular(5)),
+                                    borderSide: BorderSide(width: 1, color: kMainColor),
+                                  ),
+                                ),
+                              ),
                         FormTitle(title: 'note'.tr),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
