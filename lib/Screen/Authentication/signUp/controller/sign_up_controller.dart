@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fs_delivery/Screen/Widgets/constant.dart';
 import 'package:get/get.dart';
@@ -60,14 +61,20 @@ class SignUpController extends GetxController {
       lat: lat!.value,
       long: long!.value,
       image: selectedImage.value == '' ? null : image.value!.path,
-      drivingLicense: selectedDrivingLicense == '' ? null : drivingLicense.value!.path,
+      drivingLicense: selectedDrivingLicense.value == '' ? null : drivingLicense.value!.path,
     );
     if (response['success'] == true) {
       isLoading.value = false;
       print("success");
       Get.to(() => SignUpVerifyScreen());
     } else {
-      print("failed");
+      Get.snackbar(
+        "Error",
+        response['data']['message'],
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
       isLoading.value = false;
     }
   }

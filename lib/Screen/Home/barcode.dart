@@ -1,9 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../Controllers/dashboard_controller.dart';
 import '../../fsSpotApp/controllers/fs_spot_dashboard_controller.dart';
 import '../Widgets/constant.dart';
+
+class BarcodeScannerScreen extends StatelessWidget {
+  final MobileScannerController cameraController = MobileScannerController();
+
+  BarcodeScannerScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Barcode Scanner'),
+      ),
+      body: MobileScanner(
+        controller: cameraController,
+        onDetect: (capture) {
+          final List<Barcode> barcodes = capture.barcodes;
+          for (final barcode in barcodes) {
+            if (barcode.rawValue != null) {
+              Navigator.pop(context, barcode.rawValue);
+            }
+          }
+        },
+      ),
+    );
+  }
+}
 
 class BarcodeParcel extends StatefulWidget {
   const BarcodeParcel({super.key});
@@ -17,6 +43,7 @@ class _BarcodeParcelState extends State<BarcodeParcel> {
   DashboardController dashboardController = Get.put(DashboardController());
   TextEditingController barcodeController = TextEditingController();
   bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,44 +63,32 @@ class _BarcodeParcelState extends State<BarcodeParcel> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              isChecked == false
-                  ? ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
+              if (!isChecked)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                  ),
+                  onPressed: () async {
+                    final res = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BarcodeScannerScreen(),
                       ),
-                      onPressed: () async {
-                        String? res = await SimpleBarcodeScanner.scanBarcode(
-                          context,
-                          barcodeAppBar: const BarcodeAppBar(
-                            appBarTitle: 'Test',
-                            centerTitle: false,
-                            enableBackButton: true,
-                            backButtonIcon: Icon(Icons.arrow_back_ios),
-                          ),
-                          isShowFlashIcon: true,
-                          delayMillis: 2000,
-                          cameraFace: CameraFace.back,
-                        );
-                        setState(() {
-                          result = res as String;
-                          barcodeParcel.getBarcodeParcel(context, result);
-                        });
-                      },
-                      child: Obx(
-                        () => barcodeParcel.dashboardLoader.value
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ))
-                            : const Text(
-                                'Open Barcode Scanner',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              isChecked == false ? Text('Parcel: $result') : SizedBox.shrink(),
-              isChecked == false ? Text('or') : SizedBox.shrink(),
+                    );
+
+                    if (res != null) {
+                      setState(() {
+                        result = res;
+                      });
+                      barcodeParcel.getBarcodeParcel(context, result);
+                    }
+                  },
+                  child: Obx(
+                    () => barcodeParcel.dashboardLoader.value ? const Center(child: CircularProgressIndicator(color: Colors.white)) : const Text('Open Barcode Scanner', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              if (!isChecked) Text('Parcel: $result'),
+              if (!isChecked) const Text('or'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -85,53 +100,41 @@ class _BarcodeParcelState extends State<BarcodeParcel> {
                       });
                     },
                   ),
-                  isChecked ? Text('Use barcode scanner instead!') : Text('Enter tracking id manually!'),
+                  Text(isChecked ? 'Use barcode scanner instead!' : 'Enter tracking id manually!'),
                 ],
               ),
-              isChecked
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 55,
-                        child: TextField(
-                          controller: barcodeController,
-                          decoration: InputDecoration(
-                            hintText: "Enter tracking id",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+              if (isChecked)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 55,
+                    child: TextField(
+                      controller: barcodeController,
+                      decoration: const InputDecoration(
+                        hintText: "Enter tracking id",
+                        border: OutlineInputBorder(),
                       ),
-                    )
-                  : SizedBox.shrink(),
-              isChecked
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, minimumSize: Size(220, 45)),
-                        onPressed: () async {
-                          if (barcodeController.text.isEmpty) {
-                            Get.rawSnackbar(title: "Empty", message: "Enter tracking id");
-                          }
-
-                          if (barcodeController.text.isNotEmpty) {
-                            await barcodeParcel.getBarcodeParcel(context, barcodeController.text);
-                            barcodeController.clear();
-                          }
-                        },
-                        child: Obx(
-                          () => barcodeParcel.dashboardLoader.value
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ))
-                              : Text(
-                                  "Submit",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+              if (isChecked)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, minimumSize: const Size(220, 45)),
+                    onPressed: () async {
+                      if (barcodeController.text.isEmpty) {
+                        Get.rawSnackbar(title: "Empty", message: "Enter tracking id");
+                      } else {
+                        await barcodeParcel.getBarcodeParcel(context, barcodeController.text);
+                        barcodeController.clear();
+                      }
+                    },
+                    child: Obx(
+                      () => barcodeParcel.dashboardLoader.value ? const Center(child: CircularProgressIndicator(color: Colors.white)) : const Text("Submit", style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -152,6 +155,7 @@ class _SpotBarcodeParcelState extends State<SpotBarcodeParcel> {
   FsSpotDashboardController dashboardController = Get.put(FsSpotDashboardController());
   TextEditingController barcodeController = TextEditingController();
   bool isChecked = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,44 +175,32 @@ class _SpotBarcodeParcelState extends State<SpotBarcodeParcel> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              isChecked == false
-                  ? ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
+              if (!isChecked)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                  ),
+                  onPressed: () async {
+                    final res = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BarcodeScannerScreen(),
                       ),
-                      onPressed: () async {
-                        String? res = await SimpleBarcodeScanner.scanBarcode(
-                          context,
-                          barcodeAppBar: const BarcodeAppBar(
-                            appBarTitle: 'Test',
-                            centerTitle: false,
-                            enableBackButton: true,
-                            backButtonIcon: Icon(Icons.arrow_back_ios),
-                          ),
-                          isShowFlashIcon: true,
-                          delayMillis: 2000,
-                          cameraFace: CameraFace.back,
-                        );
-                        setState(() {
-                          result = res as String;
-                          barcodeParcel.getBarcodeParcel(context, result);
-                        });
-                      },
-                      child: Obx(
-                        () => barcodeParcel.dashboardLoader.value
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                color: Colors.white,
-                              ))
-                            : const Text(
-                                'Open Barcode Scanner',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
-              isChecked == false ? Text('Parcel: $result') : SizedBox.shrink(),
-              isChecked == false ? Text('or') : SizedBox.shrink(),
+                    );
+
+                    if (res != null) {
+                      setState(() {
+                        result = res;
+                      });
+                      barcodeParcel.getBarcodeParcel(context, result);
+                    }
+                  },
+                  child: Obx(
+                    () => barcodeParcel.dashboardLoader.value ? const Center(child: CircularProgressIndicator(color: Colors.white)) : const Text('Open Barcode Scanner', style: TextStyle(color: Colors.white)),
+                  ),
+                ),
+              if (!isChecked) Text('Parcel: $result'),
+              if (!isChecked) const Text('or'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -220,53 +212,41 @@ class _SpotBarcodeParcelState extends State<SpotBarcodeParcel> {
                       });
                     },
                   ),
-                  isChecked ? Text('Use barcode scanner instead!') : Text('Enter tracking id manually!'),
+                  Text(isChecked ? 'Use barcode scanner instead!' : 'Enter tracking id manually!'),
                 ],
               ),
-              isChecked
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        height: 55,
-                        child: TextField(
-                          controller: barcodeController,
-                          decoration: InputDecoration(
-                            hintText: "Enter tracking id",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+              if (isChecked)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                    height: 55,
+                    child: TextField(
+                      controller: barcodeController,
+                      decoration: const InputDecoration(
+                        hintText: "Enter tracking id",
+                        border: OutlineInputBorder(),
                       ),
-                    )
-                  : SizedBox.shrink(),
-              isChecked
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, minimumSize: Size(220, 45)),
-                        onPressed: () async {
-                          if (barcodeController.text.isEmpty) {
-                            Get.rawSnackbar(title: "Empty", message: "Enter tracking id");
-                          }
-
-                          if (barcodeController.text.isNotEmpty) {
-                            await barcodeParcel.getBarcodeParcel(context, barcodeController.text);
-                            barcodeController.clear();
-                          }
-                        },
-                        child: Obx(
-                          () => barcodeParcel.dashboardLoader.value
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                ))
-                              : Text(
-                                  "Submit",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+              if (isChecked)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.purple, minimumSize: const Size(220, 45)),
+                    onPressed: () async {
+                      if (barcodeController.text.isEmpty) {
+                        Get.rawSnackbar(title: "Empty", message: "Enter tracking id");
+                      } else {
+                        await barcodeParcel.getBarcodeParcel(context, barcodeController.text);
+                        barcodeController.clear();
+                      }
+                    },
+                    child: Obx(
+                      () => barcodeParcel.dashboardLoader.value ? const Center(child: CircularProgressIndicator(color: Colors.white)) : const Text("Submit", style: TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

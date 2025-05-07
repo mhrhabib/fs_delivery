@@ -18,9 +18,9 @@ class APIList {
   static String? passwordUpdate = "${server!}update-password";
   static String? otpCheck = "${server!}otp/check";
   static String? verifyOtp = "${server!}otp-verification";
-  static String? sentOtpForReset = "${server!}/password/email";
-  static String? resendOtp = "${server!}/resend-otp";
-  static String? passwordReset = "${server!}/password/reset";
+  static String? sentOtpForReset = "${server!}password/email";
+  static String? resendOtp = "${server!}resend-otp";
+  static String? passwordReset = "${server!}password/reset";
 
   // Deliveryman Endpoints
 
@@ -47,6 +47,7 @@ class APIList {
   static String? spotManagerProfileUpdate = "${server!}spot_manager/profile/update";
   static String? spotManagerChangeStatus = "${server!}spot_manager/parcel-status-update";
   static String? spotManagerDashboard = "${server!}spot_manager/dashboard";
+  static String? spotManagerReturnUrl = "${server!}spot_manager/parcel/return";
 
   static String? spotManagerBarcodeParcel = "${server!}spot_manager/parcel/find/";
 

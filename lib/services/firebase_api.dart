@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,19 +10,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../Screen/Home/dashboard/dashboard_screen.dart';
 import '../Screen/Widgets/constant.dart';
 
+Future<bool> isRunningOnSimulator() async {
+  // Simple simulator detection for iOS
+  return Platform.isIOS && !Platform.environment.containsKey("SIMULATOR_UDID") == false;
+}
+
 Future<void> handleBackgrounMessage(RemoteMessage message) async {
   print(message.notification!.title);
-  Get.rawSnackbar(
-    snackPosition: SnackPosition.TOP,
-    title: message.notification?.title,
-    message: message.notification?.body,
-    backgroundColor: kMainColor.withValues(alpha: 0.9),
-    margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20),
-  );
-  FirebaseApi().showFlutterNotification(
-    title: message.notification!.title!,
-    body: message.notification!.body!,
-  );
+  Get.rawSnackbar(snackPosition: SnackPosition.TOP, title: message.notification?.title, message: message.notification?.body, backgroundColor: kMainColor.withValues(alpha: 0.9), margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20));
+  FirebaseApi().showFlutterNotification(title: message.notification!.title!, body: message.notification!.body!);
 }
 
 class FirebaseApi {
@@ -28,10 +26,30 @@ class FirebaseApi {
 
   Future<void> initNotifications() async {
     SharedPreferences storage = await SharedPreferences.getInstance();
-    await _firebaseMessaging.requestPermission();
-    final fCMToken = await _firebaseMessaging.getToken();
-    await storage.setString('deviceToken', fCMToken!);
-    //print(">>>>>>fcm token >>>>>>>${storage.read('deviceToken')}");
+
+    NotificationSettings settings = await _firebaseMessaging.requestPermission();
+    print('User granted permission: ${settings.authorizationStatus}');
+
+    bool isSimulator = Platform.isIOS && Platform.environment.containsKey("SIMULATOR_DEVICE_NAME");
+
+    if (!isSimulator) {
+      try {
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        print('APNs Token: $apnsToken');
+      } catch (e) {
+        print('Failed to get APNs token: $e');
+      }
+
+      try {
+        final fCMToken = await _firebaseMessaging.getToken();
+        print("FCM Token: $fCMToken");
+        await storage.setString('deviceToken', fCMToken ?? '');
+      } catch (e) {
+        print('Failed to get FCM token: $e');
+      }
+    } else {
+      print("Running on iOS Simulator. Skipping APNs + FCM token fetch.");
+    }
 
     FirebaseMessaging.onBackgroundMessage(handleBackgrounMessage);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
@@ -50,51 +68,41 @@ class FirebaseApi {
   Future<void> setupFlutterLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/launcher_icon');
 
+    const DarwinInitializationSettings initializationSettingsDarwin = DarwinInitializationSettings();
+
     final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
-    );
-
-    await FlutterLocalNotificationsPlugin().initialize(
-      initializationSettings,
-    );
-    if (isFlutterLocalNotificationsInitialized) {
-      return;
-    }
-    channel = const AndroidNotificationChannel(
-      'truckvala channel 1', // id
-      'High Importance Notifications', // title
-      description: 'This channel is used for important notifications.', // description
-      importance: Importance.high,
+      iOS: initializationSettingsDarwin,
+      // macOS can be added if needed
     );
 
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    /// Create an Android Notification Channel.
-    ///
-    /// We use this channel in the `AndroidManifest.xml` file to override the
-    /// default FCM channel to enable heads up notifications.
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    if (isFlutterLocalNotificationsInitialized) {
+      return;
+    }
+
+    channel = const AndroidNotificationChannel(
+      'truckvala channel 1', // id
+      'High Importance Notifications', // title
+      description: 'This channel is used for important notifications.',
+      importance: Importance.high,
+    );
+
     await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.createNotificationChannel(channel);
 
-    /// Update the iOS foreground notification presentation options to allow
-    /// heads up notifications.
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
+
     isFlutterLocalNotificationsInitialized = true;
   }
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  showFlutterNotification({
-    required String title,
-    required String body,
-  }) async {
+  showFlutterNotification({required String title, required String body}) async {
     const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails("my channel", 'truckval', channelDescription: 'Channel description', importance: Importance.max, priority: Priority.high, ticker: 'ticker');
 
-    const NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-    );
+    const NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
 
     await flutterLocalNotificationsPlugin.show(0, title, body, notificationDetails);
   }

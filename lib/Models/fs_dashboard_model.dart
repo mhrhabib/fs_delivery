@@ -28,6 +28,7 @@ class Data {
   List<Parcel>? readyToDeliveryParcel;
   List<Parcel>? acceptParcel;
   List<Parcel>? releaseParcel;
+  List<Parcel>? returnParcel;
   List<Parcel>? allParcel;
 
   Data({this.pendingParcel, this.pendingDeliveryParcel, this.readyToDeliveryParcel, this.acceptParcel, this.releaseParcel, this.allParcel});
@@ -63,6 +64,12 @@ class Data {
         releaseParcel!.add(Parcel.fromJson(v));
       });
     }
+    if (json['return_parcel'] != null) {
+      returnParcel = <Parcel>[];
+      json['return_parcel'].forEach((v) {
+        returnParcel!.add(Parcel.fromJson(v));
+      });
+    }
     if (json['all_parcel'] != null) {
       allParcel = <Parcel>[];
       json['all_parcel'].forEach((v) {
@@ -87,6 +94,9 @@ class Data {
     }
     if (releaseParcel != null) {
       data['release_parcel'] = releaseParcel!.map((v) => v.toJson()).toList();
+    }
+    if (returnParcel != null) {
+      data['return_parcel'] = returnParcel!.map((v) => v.toJson()).toList();
     }
     if (allParcel != null) {
       data['all_parcel'] = allParcel!.map((v) => v.toJson()).toList();
@@ -131,41 +141,42 @@ class Parcel {
   int? senderFsPointId;
   int? customerFsPointId;
 
-  Parcel(
-      {this.id,
-      this.trackingId,
-      this.merchantId,
-      this.merchantName,
-      this.merchantUserName,
-      this.merchantUserEmail,
-      this.merchantMobile,
-      this.merchantAddress,
-      this.customerName,
-      this.customerPhone,
-      this.customerAddress,
-      this.shipmentType,
-      this.invoiceNo,
-      this.weight,
-      this.totalDeliveryAmount,
-      this.codAmount,
-      this.vatAmount,
-      this.currentPayable,
-      this.cashCollection,
-      this.deliveryTypeId,
-      this.deliveryType,
-      this.status,
-      this.statusName,
-      this.pickupDate,
-      this.deliveryDate,
-      this.createdAt,
-      this.updatedAt,
-      this.parcelDate,
-      this.parcelTime,
-      this.reviewStar,
-      this.paymentId,
-      this.invoicePaymentStatus,
-      this.senderFsPointId,
-      this.customerFsPointId});
+  Parcel({
+    this.id,
+    this.trackingId,
+    this.merchantId,
+    this.merchantName,
+    this.merchantUserName,
+    this.merchantUserEmail,
+    this.merchantMobile,
+    this.merchantAddress,
+    this.customerName,
+    this.customerPhone,
+    this.customerAddress,
+    this.shipmentType,
+    this.invoiceNo,
+    this.weight,
+    this.totalDeliveryAmount,
+    this.codAmount,
+    this.vatAmount,
+    this.currentPayable,
+    this.cashCollection,
+    this.deliveryTypeId,
+    this.deliveryType,
+    this.status,
+    this.statusName,
+    this.pickupDate,
+    this.deliveryDate,
+    this.createdAt,
+    this.updatedAt,
+    this.parcelDate,
+    this.parcelTime,
+    this.reviewStar,
+    this.paymentId,
+    this.invoicePaymentStatus,
+    this.senderFsPointId,
+    this.customerFsPointId,
+  });
 
   Parcel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

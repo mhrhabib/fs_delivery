@@ -1,0 +1,2 @@
+/Users/mhrhabib39/Downloads/swift/kenya/fs_delivery/android/app/.cxx/Debug/63463533/x86/CMakeFiles/edit_cache.dir
+/Users/mhrhabib39/Downloads/swift/kenya/fs_delivery/android/app/.cxx/Debug/63463533/x86/CMakeFiles/rebuild_cache.dir

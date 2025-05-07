@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "812501789771",
-    "project_id": "fs-spot",
-    "storage_bucket": "fs-spot.firebasestorage.app"
+    "project_number": "178956125719",
+    "project_id": "fsspot-ae02c",
+    "storage_bucket": "fsspot-ae02c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:812501789771:android:abfbe6cf730e2b1682b1ce",
+        "mobilesdk_app_id": "1:178956125719:android:34b8481b41e48d21443e52",
         "android_client_info": {
-          "package_name": "com.fsspot.fs_delivery"
+          "package_name": "com.fsspot.fsdelivery"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBQYhitmHCuJ0QTgEcOlXqrVT9XsBSfwko"
+          "current_key": "AIzaSyDuHNiCJemNxaen393oBBByyY_ERG8B_FU"
         }
       ],
       "services": {

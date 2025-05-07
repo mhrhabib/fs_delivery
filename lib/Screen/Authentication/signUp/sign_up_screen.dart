@@ -217,7 +217,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             : DecorationImage(
                                                 image: FileImage(signUpController.image.value!),
                                               ),
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(alpha: 0.2),
                                         border: Border.all(color: Colors.grey),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
@@ -256,7 +256,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             : DecorationImage(
                                                 image: FileImage(signUpController.drivingLicense.value!),
                                               ),
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(alpha: 0.2),
                                         border: Border.all(color: Colors.grey),
                                         borderRadius: BorderRadius.circular(20),
                                       ),

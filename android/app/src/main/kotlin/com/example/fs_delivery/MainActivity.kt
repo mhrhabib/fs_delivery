@@ -1,4 +1,4 @@
-package com.fsspot.fs_delivery
+package com.fsspot.fsdelivery
 
 import io.flutter.embedding.android.FlutterActivity
 

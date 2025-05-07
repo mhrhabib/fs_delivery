@@ -13,6 +13,7 @@ import 'Controllers/global-controller.dart';
 import 'Locale/language.dart';
 import 'Screen/SplashScreen/splash_screen.dart';
 import 'utils/keys.dart';
+import 'firebase_options.dart';
 
 const String appTitle = 'FS-platform';
 
@@ -21,22 +22,16 @@ Future<void> main() async {
 
   Stripe.publishableKey = publishingKey;
   await Stripe.instance.applySettings();
-  const firebaseOptions = FirebaseOptions(
-    appId: '1:812501789771:android:abfbe6cf730e2b1682b1ce',
-    apiKey: 'AIzaSyBQYhitmHCuJ0QTgEcOlXqrVT9XsBSfwko',
-    projectId: 'fs-spot',
-    messagingSenderId: '812501789771',
-    authDomain: 'fs-spot.firebasestorage.app',
-  );
-  await Firebase.initializeApp(name: 'courier', options: firebaseOptions);
+
+  // ...
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseMessaging.instance.requestPermission(alert: true, announcement: false, badge: true, carPlay: false, criticalAlert: false, provisional: false, sound: true);
+
   await FirebaseApi().initNotifications();
   await FirebaseApi().setupFlutterLocalNotifications();
 
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     FirebaseApi().showFlutterNotification(title: message.notification!.title!, body: message.notification!.body!);
     print("hello");
@@ -60,26 +55,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: kMainColor));
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     Get.put(GlobalController()).onInit();
 
     return ScreenUtilInit(
       designSize: Size(360, 800),
-      builder: ((context, child) => GetMaterialApp(
+      builder:
+          ((context, child) => GetMaterialApp(
             debugShowCheckedModeBanner: false,
             translations: Languages(),
             locale: lang,
             title: 'Merchant',
-            theme: ThemeData(
-                fontFamily: 'Display',
-                appBarTheme: AppBarTheme(
-                  color: Colors.white,
-                  iconTheme: IconThemeData(color: Colors.white),
-                  titleTextStyle: TextStyle(color: Colors.white),
-                )),
+            theme: ThemeData(fontFamily: 'Display', appBarTheme: AppBarTheme(color: Colors.white, iconTheme: IconThemeData(color: Colors.white), titleTextStyle: TextStyle(color: Colors.white))),
             home: const SplashScreen(),
           )),
     );
@@ -88,8 +75,9 @@ class MyApp extends StatelessWidget {
 
 Future<void> requestLocationPermission() async {
   var status = await Permission.location.request();
+  var status1 = await Permission.camera.request();
 
-  if (status.isGranted) {
+  if (status.isGranted || status1.isGranted) {
     print('Location permission granted');
   } else if (status.isDenied) {
     print('Location permission denied');
