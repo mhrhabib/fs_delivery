@@ -252,9 +252,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               margin: const EdgeInsets.all(0.0),
                               padding: const EdgeInsets.only(left: 4),
                               decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [const Text('Location ON'), Switch(onChanged: toggleSwitch, value: isSwitched, activeColor: Colors.white, activeTrackColor: Colors.red, inactiveThumbColor: Colors.red, inactiveTrackColor: Colors.black)],
+                              child: FittedBox(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [const Text('Location ON'), Switch(onChanged: toggleSwitch, value: isSwitched, activeColor: Colors.white, activeTrackColor: Colors.red, inactiveThumbColor: Colors.red, inactiveTrackColor: Colors.black)],
+                                ),
                               ),
                             ),
                           ],
@@ -1095,8 +1097,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     dashboardController.statusID == '32' ? FormTitle(title: 'cash_collection_tk'.tr) : SizedBox().marginZero,
                     dashboardController.statusID == '32' ? CustomFormField(controller: dashboardController.cashController, validatorTxt: 'please_type_your_amount'.tr) : SizedBox().marginZero,
                     const SizedBox(height: 10.0),
-                    dashboardController.statusID == '24' ? SizedBox.shrink() : FormTitle(title: 'ID'.tr),
-                    dashboardController.statusID == '24'
+                    dashboardController.statusID == '44' ? SizedBox.shrink() : FormTitle(title: 'ID'.tr),
+                    dashboardController.statusID == '44'
                         ? SizedBox.shrink()
                         : Obx(
                           () => Column(
@@ -1117,8 +1119,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ],
                           ),
                         ),
-                    dashboardController.statusID == '24' ? SizedBox.shrink() : FormTitle(title: 'PickUp code'.tr),
-                    dashboardController.statusID == '24'
+                    dashboardController.statusID == '44' ? SizedBox.shrink() : FormTitle(title: 'PickUp code'.tr),
+                    dashboardController.statusID == '44'
                         ? SizedBox.shrink()
                         : TextFormField(
                           controller: dashboardController.pickUpCodeController.value,

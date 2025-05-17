@@ -1300,8 +1300,9 @@ class _FsSpotDashboardState extends State<FsSpotDashboard> {
                                                                             InkWell(
                                                                               onTap: () {
                                                                                 print("reutn delivery");
+                                                                                print(dashboard.returnedParcel[index].status);
 
-                                                                                if (dashboard.returnedParcel[index].status == 44) {
+                                                                                if (dashboard.returnedParcel[index].status == 44 || dashboard.returnedParcel[index].status == 42) {
                                                                                   returnDeliveryPopUp(dashboard.returnedParcel[index]);
                                                                                 } else {
                                                                                   toast('The parcel is already returned');

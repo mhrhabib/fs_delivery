@@ -1,0 +1,2 @@
+/Users/mhrhabib39/Downloads/swift/kenya/fs_delivery/android/app/.cxx/RelWithDebInfo/4i4v4r5q/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/mhrhabib39/Downloads/swift/kenya/fs_delivery/android/app/.cxx/RelWithDebInfo/4i4v4r5q/arm64-v8a/CMakeFiles/rebuild_cache.dir
