@@ -278,12 +278,12 @@ class FsSpotDashboardController extends GetxController {
     };
 
     var jsonString = jsonEncode(queryParameters);
-    print(jsonString);
+    print("<><><><><><><><><>< $jsonString");
     try {
       server.postRequestWithToken(endPoint: APIList.spotManagerChangeStatus, body: jsonString).then((response) {
-        print(response.statusCode);
+        print("RESPONSE code ><<><>< ${response.statusCode}");
         if (response != null && response.statusCode == 200) {
-          print(response);
+          print(response.body);
           getDashboard();
 
           Get.rawSnackbar(snackPosition: SnackPosition.TOP, title: 'Change Status', message: 'Status Successfully', backgroundColor: CupertinoColors.activeGreen.withOpacity(.9), margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20));
