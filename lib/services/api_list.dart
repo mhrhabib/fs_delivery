@@ -1,5 +1,5 @@
 class APIList {
-  static String? server = "https://dev.fspickupspots.com/api/v10/";
+  static String? server = "https://fspickupspots.com/api/v10/";
   static String? apiUrl = "fspickupspots.com";
   static String? apiCheckKey = "123456rx-ecourier123456";
   static String? apiEndPoint = "/api/v10/";
